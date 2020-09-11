@@ -11,9 +11,9 @@ from typing import List
 
 logger = getLogger(__name__)  # type: Logger
 
-comprog_include = re.compile('#include\s*["<](comprog/[a-z_]*(|.hpp))[">]\s*')
+comprog_include = re.compile('#include\s*["<](comprog/[a-z_/]*(|.hpp))[">]\s*')
 
-include_guard = re.compile('#.*ATCODER_[A-Z_]*_HPP')
+include_guard = re.compile('#.*COMPROG_[A-Z_]*_HPP')
 
 lib_path = Path.cwd()
 
@@ -53,6 +53,7 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--console',
                         action='store_true', help='Print to Console')
     parser.add_argument('--lib', help='Path to Atcoder Library')
+    parser.add_argument('--res', help='Result File')
     opts = parser.parse_args()
 
     if opts.lib:
@@ -73,6 +74,9 @@ if __name__ == "__main__":
     output = '\n'.join(result) + '\n'
     if opts.console:
         print(output)
+    elif opts.res:
+        with open(opts.res, 'w') as f:
+            f.write(output)
     else:
         with open('combined.cpp', 'w') as f:
             f.write(output)
