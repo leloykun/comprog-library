@@ -6,7 +6,7 @@
 
 namespace cp {
 
-template <class T, T (*op)(T, T), T (*invert)(T), T (*e)()>
+template <class T, T (*op)(T, T), T (*inv)(T), T (*e)()>
 struct fenwick {
   int n;
   std::vector<T> data;
@@ -14,29 +14,22 @@ struct fenwick {
   fenwick() : n(0) {}
   fenwick(int n) : n(n), data(n) {}
 
-  void act(int p, T x) {
-    assert(0 <= p && p < n);
-    p++;
-    while (p <= n) {
-      data[p - 1] = op(data[p - 1], x);
-      p += p & -p;
-    }
+  void act(int i, int val) {
+    for (; i < n; i |= i+1)
+      data[i] = op(data[i], val);
   }
 
-  // [0, r-1]
-  T product(int r) {
-    T s = e();
-    while (r > 0) {
-      s = op(s, data[r - 1]);
-      r -= r & -r;
-    }
-    return s;
+  // [0, i]
+  T product(int i) {
+    T res = 0;
+    for (; i >= 0; i = (i & (i+1)) - 1)
+      res = op(res, data[i]);
+    return res;
   }
 
-  // [l, r-1]
-  T product(int l, int r) {
-    assert(0 <= l && l <= r && r <= n);
-    return op(product(r), invert(product(l)));
+  int product(int i, int j) {
+    if (i == 0)  return product(j);
+    return product(j) - product(i-1);
   }
 };
 
