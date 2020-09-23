@@ -5,7 +5,7 @@
 #include <comprog/datastruct/fenwick>
 
 int op(int a, int b) { return a + b; }
-int invert(int a) { return -a; }
+int op_inv(int a, int b) { return a - b; }
 int e() { return 0; }
 
 int main() {
@@ -16,9 +16,13 @@ int main() {
   for (int i = 0; i < N; ++i)
     ar[i] = (rand() << 16) ^ rand();
 
-  cp::fenwick<int, op, invert, e> fen(N);
+  auto curr_time = time(NULL);
+
+  cp::fenwick<int, op, op_inv, e> fen(N);
   for (int i = 0; i < N; ++i)
     fen.act(i, ar[i]);
+
+  std::cout << time(NULL) - curr_time << "secs \n";
 
   for (int i = 0; i < N; ++i) {
     int ans = 0;
@@ -28,6 +32,7 @@ int main() {
     }
   }
 
+  std::cout << time(NULL) - curr_time << "secs \n";
   std::cout << "Fenwick Test A done. All clear!\n";
 
   return 0;

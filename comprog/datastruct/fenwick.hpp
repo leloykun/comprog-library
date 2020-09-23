@@ -6,30 +6,32 @@
 
 namespace cp {
 
-template <class T, T (*op)(T, T), T (*inv)(T), T (*e)()>
+template <class T, T (*op)(T, T), T (*op_inv)(T, T), T (*e)()>
 struct fenwick {
   int n;
   std::vector<T> data;
 
   fenwick() : n(0) {}
-  fenwick(int n) : n(n), data(n) {}
+  fenwick(int n) : n(n), data(n) {
+    for (int i = 0; i < n; ++i) data[i] = e();
+  }
 
-  void act(int i, int val) {
-    for (; i < n; i |= i+1)
-      data[i] = op(data[i], val);
+  void act(int i, T val) {
+    for (i++; i <= n; i += i & -i)
+      data[i-1] = op(data[i-1], val);
   }
 
   // [0, i]
   T product(int i) {
-    T res = 0;
-    for (; i >= 0; i = (i & (i+1)) - 1)
-      res = op(res, data[i]);
+    T res = e();
+    for (i++; i > 0; i -= i & -i)
+      res = op(res, data[i-1]);
     return res;
   }
 
-  int product(int i, int j) {
+  T product(int i, int j) {
     if (i == 0)  return product(j);
-    return product(j) - product(i-1);
+    return op_inv(product(j), product(i-1));
   }
 };
 
